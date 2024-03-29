@@ -61,6 +61,7 @@ def main():
                 for line in sys.stdin:
                     file.write(line)
             fileName = "newFile.txt"
+            wcCnt,chCnt,lnCnt,bytCnt = getWords(fileName),getChars(fileName),getLines(fileName),getBytes(fileName)
             if args.c:
                 chCnt = getChars(fileName)
                 print(f'{chCnt}')
@@ -73,29 +74,24 @@ def main():
             elif args.m:
                 bytCnt = getBytes(fileName)
                 print(f'{bytCnt}')
+            else:
+                print(f'{chCnt} {lnCnt} {wcCnt} {bytCnt}')
             if os.path.exists("newFile.txt"):
                 os.remove("newFile.txt")
             file.close()
     elif args.file_name:
         fileName = args.file_name
         wcCnt,chCnt,lnCnt = getWords(fileName),getChars(fileName),getLines(fileName)
-        print(f'{lnCnt} {wcCnt} {chCnt} {fileName}')
-    elif c:
-        fileName = c
-        chCnt = getChars(fileName)
-        print(f'{chCnt} {fileName}')
-    elif l:
-        fileName = l
-        lnCnt = getLines(fileName)
-        print(f'{lnCnt} {fileName}')
-    elif w:
-        fileName = w
-        wcCnt = getWords(fileName)
-        print(f'{wcCnt} {fileName}')
-    elif m:
-        fileName = m
-        bytCnt = getBytes(fileName)
-        print(f'{bytCnt} {fileName}')
+        if c:
+            print(f'{chCnt} {fileName}')
+        elif l:
+            print(f'{lnCnt} {fileName}')
+        elif w:
+            print(f'{wcCnt} {fileName}')
+        elif m:
+            print(f'{bytCnt} {fileName}')
+        else:
+            print(f'{chCnt} {lnCnt} {wcCnt} {bytCnt} {fileName}')
 
 if __name__ == "__main__":
     main()
