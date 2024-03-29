@@ -6,15 +6,18 @@ def filterArgs():
     if(printDebugs): print("[filterArgs]")
     fields = []
     delimiter = "\t"
-    fileName = sys.argv[-1]
+    fileName = ''
+    fieldsFound,delimiterFound = False,False
 
     for arg in sys.argv:
-        if('-f' in arg):
+        if('-f' in arg and not fieldsFound):
             fields = getFieldsToCut(arg)
-        if('-d' in arg):
+            fieldsFound = True
+        elif('-d' in arg and not delimiterFound):
             delimiter = arg.split("-d")[1]
-    # if fileName == fields or fileName == delimiter:
-    #     fileName = ''
+            delimiterFound = True
+        elif(fieldsFound and delimiterFound):
+            fileName = arg
     return [fields,delimiter,fileName]
 
 def getFieldsFromFile(fileName,fields,delimiter):
@@ -35,6 +38,17 @@ def getFieldsFromFile(fileName,fields,delimiter):
 def getFieldsFromStdIn(fileName,fields,delimiter):
     if(printDebugs): print("[getFieldsFromStdIn]")
 
+    res = ""
+
+    for lines in sys.stdin:
+        line = lines.split(delimiter)
+        for field in fields:
+            res += line[int(field) - 1] + delimiter
+        res += "\n"
+
+    print(res)
+    return
+
 def main():
     fields,delimiter,fileName = filterArgs()
     fileNameProvided = True
@@ -42,18 +56,18 @@ def main():
     if fields == [] or len(fields) == 1 and fields[0] == '':
         print("[ERROR] Invalid Arguments: Incorrect or missing fields argument")
         return
-    # if fileName == delimiter or fileName == fields or fileName == '' or fileName == '-':
-    #     fileNameProvided = False
-    #     print("fileName = empty")
-    #     fileName = sys.stdin
-    # elif fileName == sys.argv[0] or '.' not in fileName:
-    #     print("[ERROR] Invalid Arguments: Incorrect Filename provided")
-    #     return
+    if fileName == '' or fileName == '-':
+        fileNameProvided = False
+        print("fileName = empty")
+        fileName = '-'
+    elif fileName == sys.argv[0] or '.' not in fileName:
+        print("[ERROR] Invalid Arguments: Incorrect Filename provided")
+        return
     
-    # for field in fields:
-    #     print("Listing fields: " + str(field))
-    # print("Delimiter = " + delimiter)
-    # print("FileName = " + fileName)
+    for field in fields:
+        print("Listing fields: " + str(field))
+    print("Delimiter = " + delimiter)
+    print("FileName = " + fileName)
     if(fileNameProvided): getFieldsFromFile(fileName,fields,delimiter)
     else: getFieldsFromStdIn(fileName,fields,delimiter)
     
